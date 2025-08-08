@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Hide SAT Answers",
+  "version": "1.0",
+  "description": "Toggle the visibility of your chosen answer and the correct answer on the SAT practice test details pages.",
+  "permissions": ["storage"],
+  "host_permissions": ["https://mypractice.collegeboard.org/*"],
+  "icons": {
+    "48": "icons/icon48.png",
+    "96": "icons/icon96.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://mypractice.collegeboard.org/*"],
+      "js": ["content-script.js"]
+    }
+  ],
+  "action": {
+    "default_title": "SAT Answer Hider"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "hide-sat-answers@example.com"
+    }
+  }
+}
