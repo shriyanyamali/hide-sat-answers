@@ -16,7 +16,7 @@ When reviewing the questions you got correct or incorrect on the official practi
 ## Installation
 
 1. Download the extension on [Firefox](todo).
-2. Visit [mypractice.collegeboard.org](https://mypractice.collegeboard.org/) and click "Score Details" on a practice test to see the extension in action.
+2. Visit [mypractice.collegeboard.org](https://mypractice.collegeboard.org/) and click "Score Details" on a practice test.
 3. Click the dropdown button at the top-right corner of the page.
 4. Select your preferred visibility mode:
     - Default (show all answers)
