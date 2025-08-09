@@ -15,18 +15,15 @@ When reviewing the questions you got correct or incorrect on the official practi
 
 ## Installation
 
-1. Download the extension on [Chrome](todo) or [Firefox](todo).
-4. Visit [College Board SAT Practice](https://mypractice.collegeboard.org/details) pages to see the extension in action.
-
-## Usage
-
-- Click the dropdown button at the top-right corner of the page.
-- Select your preferred visibility mode:
-  - Default (show all answers)
-  - Hide All
-  - Hide Correct
-  - Hide Incorrect
-- The extension will immediately update the page and remember your choice.
+1. Download the extension on [Firefox](todo).
+2. Visit [mypractice.collegeboard.org](https://mypractice.collegeboard.org/) and click "Score Details" on a practice test to see the extension in action.
+3. Click the dropdown button at the top-right corner of the page.
+4. Select your preferred visibility mode:
+    - Default (show all answers)
+    - Hide All
+    - Hide Correct
+    - Hide Incorrect
+5. The extension will immediately update the page and remember your choice.
 
 ## Contributing
 
