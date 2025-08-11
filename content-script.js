@@ -1,5 +1,7 @@
 const STORAGE_KEY = "hideAnswerMode";
 let currentMode = "none";
+let bootUrl = ""; 
+let urlPoller = null;
 
 const MODE_LABELS = {
   none: "Default",
@@ -8,8 +10,12 @@ const MODE_LABELS = {
   incorrect: "Hide Incorrect",
 };
 
+function onDetailsPage() {
+  return location.href.includes("/details") || location.pathname.includes("details");
+}
+
 function normalizeParagraph(p) {
-  if (p.dataset.hmaNormalized === "1") return;
+  if (!p || p.dataset.hmaNormalized === "1") return;
 
   let answer = "";
   let correctnessText = "";
@@ -17,9 +23,7 @@ function normalizeParagraph(p) {
   const existingAnswerSpan = p.querySelector(".answer-choice");
   if (existingAnswerSpan) {
     answer = existingAnswerSpan.textContent.trim();
-    const txt = p.textContent
-      .replace(existingAnswerSpan.textContent, "")
-      .trim();
+    const txt = p.textContent.replace(existingAnswerSpan.textContent, "").trim();
     const m = txt.match(/(Correct|Incorrect)/i);
     correctnessText = m ? m[0] : txt.trim();
   } else {
@@ -78,7 +82,6 @@ function normalizeCorrectAnswerCells() {
     if (!tr) return;
 
     const tds = Array.from(tr.querySelectorAll("td"));
-
     const possibleCorrectCells = tds.filter((td) => td !== yourAnswerTd);
 
     let correctTd = null;
@@ -134,7 +137,6 @@ function applyMode(mode) {
       const correctTd = Array.from(tr.querySelectorAll("td")).find(
         (td) => td.dataset.hmaNormalized === "1" && td.dataset.correctAnswer
       );
-
       if (!correctTd) return;
 
       const p = yourAnswerTd.querySelector("p");
@@ -157,13 +159,16 @@ function applyMode(mode) {
 }
 
 function createDropdown(initialValue) {
+  const existing = document.getElementById("hma-container");
+  if (existing) return existing;
+
   const container = document.createElement("div");
   container.id = "hma-container";
 
   container.style.position = "fixed";
   container.style.top = "10px";
   container.style.right = "10px";
-  container.style.zIndex = 9999;
+  container.style.zIndex = 2147483647;
   container.style.fontFamily = "Segoe UI, Tahoma, Geneva, Verdana, sans-serif";
   container.style.userSelect = "none";
 
@@ -206,7 +211,7 @@ function createDropdown(initialValue) {
   dropdown.style.minWidth = "130px";
   dropdown.style.display = "none";
   dropdown.style.flexDirection = "column";
-  dropdown.style.zIndex = 10000;
+  dropdown.style.zIndex = 2147483647;
 
   Object.entries(MODE_LABELS).forEach(([mode, label]) => {
     const item = document.createElement("div");
@@ -215,7 +220,6 @@ function createDropdown(initialValue) {
     item.style.padding = "8px 12px";
     item.style.cursor = "pointer";
     item.style.fontSize = "13px";
-    item.style.color = mode === initialValue ? "#2a4bb8" : "#000";
 
     item.addEventListener("mouseenter", () => {
       item.style.backgroundColor = "#c7d1f2ff";
@@ -238,10 +242,9 @@ function createDropdown(initialValue) {
     });
 
     dropdown.appendChild(item);
-
-    updateDropdownColors(dropdown, initialValue);
   });
 
+  updateDropdownColors(dropdown, initialValue);
   container.appendChild(dropdown);
 
   button.addEventListener("click", () => {
@@ -255,12 +258,12 @@ function createDropdown(initialValue) {
     }
   });
 
+  if (document.body) document.body.appendChild(container);
   return container;
 }
 
 function updateDropdownColors(dropdown, activeMode) {
   const activeBgColor = "#c7d1f2ff";
-
   dropdown.querySelectorAll("div").forEach((item) => {
     if (item.dataset.mode === activeMode) {
       item.style.backgroundColor = activeBgColor;
@@ -277,15 +280,28 @@ function updateDropdownColors(dropdown, activeMode) {
 }
 
 function installUI(initialMode) {
-  if (document.getElementById("hma-container")) return;
-
-  const dropdown = createDropdown(initialMode);
-  document.body.appendChild(dropdown);
+  if (!document.body) return;
+  createDropdown(initialMode);
   currentMode = initialMode;
 }
 
+function runDetailsLogic(initialMode) {
+  normalizeAll();
+  normalizeCorrectAnswerCells();
+  applyMode(initialMode);
+
+  if (window.__hmaObserver) window.__hmaObserver.disconnect();
+  window.__hmaObserver = new MutationObserver(() => {
+    normalizeAll();
+    normalizeCorrectAnswerCells();
+    applyMode(currentMode);
+  });
+  window.__hmaObserver.observe(document.body, { childList: true, subtree: true });
+}
+
 function init() {
-  if (!location.href.includes("/details")) return;
+  if (bootUrl === location.href) return;
+  bootUrl = location.href;
 
   browser.storage.local.get(STORAGE_KEY).then((result) => {
     const saved = result[STORAGE_KEY];
@@ -293,20 +309,33 @@ function init() {
       ? saved
       : "none";
 
-    console.log("Initializing with mode:", initialMode);
-
     installUI(initialMode);
-    normalizeAll();
-    normalizeCorrectAnswerCells();
-    applyMode(initialMode);
 
-    const observer = new MutationObserver(() => {
-      normalizeAll();
-      normalizeCorrectAnswerCells();
-      applyMode(currentMode);
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+    if (onDetailsPage()) {
+      runDetailsLogic(initialMode);
+    } else {
+      if (window.__hmaObserver) {
+        window.__hmaObserver.disconnect();
+        window.__hmaObserver = null;
+      }
+    }
+  }).catch((e) => {
+    installUI("none");
+    if (onDetailsPage()) runDetailsLogic("none");
   });
 }
 
-init();
+(function start() {
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+
+  if (urlPoller) clearInterval(urlPoller);
+  urlPoller = setInterval(() => {
+    if (location.href !== bootUrl) {
+      init();
+    }
+  }, 500);
+})();
