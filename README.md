@@ -15,7 +15,7 @@ When reviewing the questions you got correct or incorrect on the official practi
 
 ## Installation
 
-1. Download the extension on [Firefox](https://addons.mozilla.org/en-US/firefox/addon/hide-sat-answers/).
+1. Download the extension on [Firefox](https://addons.mozilla.org/addon/hide-sat-answers/).
 2. Visit [mypractice.collegeboard.org](https://mypractice.collegeboard.org/) and click "Score Details" on a practice test.
 3. Click the dropdown menu at the top-right corner of the page.
 4. Select your preferred visibility mode:
@@ -30,3 +30,4 @@ When reviewing the questions you got correct or incorrect on the official practi
 Contributions, suggestions, and bug reports are welcome! Please open an issue or submit a pull request.
 
 Good luck on the SAT!
+
