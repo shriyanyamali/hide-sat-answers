@@ -4,7 +4,7 @@ When reviewing the questions you got correct or incorrect on the official practi
 
 ## Features
 
-- Toggle visibility of your **selected answers** and the **correct answers** on SAT practice detail pages.
+- Toggle visibility of your selected answers and the correct answers on SAT practice detail pages.
 - Choose to hide/show:
   - All answers
   - Only answers you got correct
@@ -15,9 +15,9 @@ When reviewing the questions you got correct or incorrect on the official practi
 
 ## Installation
 
-1. Download the extension on [Firefox](todo).
+1. Download the extension on [Firefox](https://addons.mozilla.org/en-US/firefox/addon/hide-sat-answers/).
 2. Visit [mypractice.collegeboard.org](https://mypractice.collegeboard.org/) and click "Score Details" on a practice test.
-3. Click the dropdown button at the top-right corner of the page.
+3. Click the dropdown menu at the top-right corner of the page.
 4. Select your preferred visibility mode:
     - Default (show all answers)
     - Hide All
